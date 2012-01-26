@@ -1,0 +1,31 @@
+Cycles3D Copyright (C) 2012 Gamieon, Inc.
+
+Cycles3D is a free game built using the Unity development tool (http://unity3d.com/) where players can pilot a futuristic motorcycle in what will hopefully be one of several game modes. It is also an educational project to share with Unity developers and demonstrate the following concepts:
+
+- An experiment in open sourcing a Unity project
+- A learning experience in allowing a Unity game to be moddable
+- A learning experience in using Unity networking code
+- General best practices for Unity game development
+
+
+CHANGELOG
+================================================
+2012-01-25 - Initial commit of Cycles2D 2.0.a000
+
+FAQ
+================================================
+*** 2012-01-25  ***
+
+Q: Where is the glow effect?
+
+A: The glow effect is only available on professional versions of Unity. The necessary scripts will not be made available in this project. If you own a copy of Unity Pro, you may simply apply a glow script to the Main Camera object of the Main and Game scenes. Please contact c.haag@gamieon.com if you would like the glow script parameters. 
+
+
+CONTACTS
+================================================
+Christopher Haag (Project Lead) - c.haag@gamieon.com
+
+LINKS
+================================================
+http://www.indiedb.com/games/cycles3d
+https://github.com/Gamieon/Cycles3D
