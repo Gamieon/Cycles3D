@@ -12,6 +12,33 @@ CHANGELOG
 ================================================
 2012-01-25 - Initial commit of Cycles2D 2.0.a000
 
+SETUP INSTRUCTIONS
+================================================
+1. If you don't already have a copy of the Unity3D tool,
+download it from http://unity3d.com/ 
+
+2. Grab all the files from https://github.com/Gamieon/Cycles3D
+and put them into a Cycles3D folder on your computer somewhere.
+
+3. Browse into the Cycles3D folder, and unzip Library.zip into the folder
+it's in.
+
+4. Your folder structure should now look something like
+
+Cycles3D
+|	|--  Assets
+|	|	|--  <more files and folders>
+|	|--  Library
+|	|	|--  <more files and folders>
+|	 <more files and folders>
+
+5. Open Unity.
+
+6. Go to File => Open Project => Open Other and browse to the Cycles3D folder you created.
+
+It should work out of the box. (Last tested with Unity 3.4.2f2)
+
+
 FAQ
 ================================================
 *** 2012-01-25  ***
@@ -27,5 +54,6 @@ Christopher Haag (Project Lead) - c.haag@gamieon.com
 
 LINKS
 ================================================
-http://www.indiedb.com/games/cycles3d
-https://github.com/Gamieon/Cycles3D
+GitHub Home - https://github.com/Gamieon/Cycles3D
+Cycles3D Home - http://www.indiedb.com/games/cycles3d
+Unity Home - http://unity3d.com/
