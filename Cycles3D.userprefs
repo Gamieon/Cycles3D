@@ -1,0 +1,15 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Standard Assets\Directors\MouseDirector.js">
+    <Files>
+      <File FileName="Assets\Scripts\PlayerControls.js" Line="69" Column="1" />
+      <File FileName="Assets\Scripts\GameUI.js" Line="550" Column="1" />
+      <File FileName="Assets\Scripts\PlayerCamera.js" Line="23" Column="80" />
+      <File FileName="Assets\Standard Assets\Directors\MouseDirector.js" Line="28" Column="48" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
