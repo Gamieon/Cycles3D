@@ -126,6 +126,9 @@ function SetMenuWindowVisible(value : boolean)
 // one invokes.
 function OnGUI () 
 {
+	var sx : float = Screen.width;
+	var sy : float = Screen.height;
+
 	GUI.skin = guiSkin;
 	if (startedAsDedicatedServer)
 	{
@@ -136,13 +139,13 @@ function OnGUI ()
 		if (isMenuWindowVisible) 
 		{
 			// Render the main menu window if it's visible
-			RenderMenuWindow();
+			RenderMenuWindow(sx,sy);
 		}
 		else 
 		{
 			// Show the "Waiting for players" screen if the main menu
 			// window is not visible
-			RenderWaitingForPlayers();
+			RenderWaitingForPlayers(sx,sy);
 		}
 		
 		// Render the chat window if it's visible in all cases
@@ -169,7 +172,7 @@ function OnGUI ()
 		// Render the menu window if it's visible
 		if (isMenuWindowVisible) 
 		{
-			RenderMenuWindow();
+			RenderMenuWindow(sx,sy);
 		}
 
 		// Make the cursor visibility consistent with the main menu appearance
@@ -199,10 +202,8 @@ function OnGUI ()
 	RenderCountdownTimer();
 }
 
-private function RenderWaitingForPlayers()
+private function RenderWaitingForPlayers(sx : float, sy : float)
 {
-	var sx : float = Screen.width;
-	var sy : float = Screen.height;
 	var w : float = sx * 0.8;
 	var h : float = sy * 0.7;
 	GUI.BeginGroup(Rect(sx*0.1,sy*0.1,w,h));
@@ -314,12 +315,12 @@ private function RenderChatWindow()
 	GUI.skin = null;
 }
 
-private function RenderMenuWindow()
+private function RenderMenuWindow(sx : float, sy : float)
 {
 	// Render the options window instead of this main window if it's open
 	if (isOptionsMenuWindowVisible)
 	{
-		if (optionsView.RenderUI())
+		if (optionsView.RenderUI(sx,sy))
 		{
 			isOptionsMenuWindowVisible = false;
 			// Tell the cycles to update their configurations
@@ -333,8 +334,6 @@ private function RenderMenuWindow()
 	else
 	{
 		// Render the menu window if it's visible
-		var sx : float = Screen.width;
-		var sy : float = Screen.height;
 		var w : float = sx * 0.6;
 		var h : float = sy * 0.8;
 		

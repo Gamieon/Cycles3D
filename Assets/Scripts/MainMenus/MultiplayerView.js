@@ -111,25 +111,23 @@ function OnConnectToServerComplete(error : NetworkConnectionError)
 	}
 }
 
-function DoRender(director : MainMenuDirector)
+function DoRender(director : MainMenuDirector, sx : float, sy : float)
 {
-	var sx : float = Screen.width;
-	var sy : float = Screen.height;
 
 	// Render all the network-related controls
 	switch (director.mainMenuMode)
 	{
 		case MainMenuMode.NetworkLobby:
-			DrawLoungeControls(director);
+			DrawLoungeControls(director, sx,sy);
 			break;
 		case MainMenuMode.NetworkLobbyHosting:
-			DrawHostSetupControls(director);
+			DrawHostSetupControls(director, sx,sy);
 			break;
 		case MainMenuMode.NetworkLobbyEnteringPassword:
-			DrawEnterPasswordControls(director);
+			DrawEnterPasswordControls(director, sx,sy);
 			break;
 		case MainMenuMode.ManualConnect:
-			DrawManualConnectControls(director);
+			DrawManualConnectControls(director, sx,sy);
 			break;
 	}
 	
@@ -159,11 +157,8 @@ function DoRender(director : MainMenuDirector)
 	GUI.skin = oldSkin;
 }
 
-private function DrawLoungeControls(director : MainMenuDirector)
-{
-	var sx : float = Screen.width;
-	var sy : float = Screen.height;
-	
+private function DrawLoungeControls(director : MainMenuDirector, sx : float, sy : float)
+{	
 	// Reset the mouse over index
 	if(Event.current.type == EventType.Repaint) {
 		mouseOverGame.gameIndex = -1;
@@ -331,14 +326,12 @@ private function DrawLoungeControls(director : MainMenuDirector)
 	x += dx;
 }
 
-private function DrawHostSetupControls(director : MainMenuDirector)
+private function DrawHostSetupControls(director : MainMenuDirector, sx : float, sy : float)
 {
 	// Change the GUI skin for the static text for configuration options
 	var oldSkin : GUISkin = GUI.skin;
 	GUI.skin = arialSkin;
 
-	var sx : float = Screen.width;
-	var sy : float = Screen.height;
 	var y : float = sy * 0.05;
 	var dy : float = sy * 0.06;
 	
@@ -427,11 +420,8 @@ private function DrawHostSetupControls(director : MainMenuDirector)
 	}
 }
 
-private function DrawEnterPasswordControls(director : MainMenuDirector)
+private function DrawEnterPasswordControls(director : MainMenuDirector, sx : float, sy : float)
 {
-	var sx : float = Screen.width;
-	var sy : float = Screen.height;
-	
 	// Now render key fields 
 	var oldSkin : GUISkin = GUI.skin;
 	GUI.skin = arialSkin;
@@ -455,14 +445,11 @@ private function DrawEnterPasswordControls(director : MainMenuDirector)
 	}
 }
 
-private function DrawManualConnectControls(director : MainMenuDirector)
+private function DrawManualConnectControls(director : MainMenuDirector, sx : float, sy : float)
 {
 	// Change the GUI skin for the static text for configuration options
 	var oldSkin : GUISkin = GUI.skin;
 	GUI.skin = arialSkin;
-
-	var sx : float = Screen.width;
-	var sy : float = Screen.height;
 	
 	var dy : float = sy * 0.1;
 	var y : float = sy * 0.1;

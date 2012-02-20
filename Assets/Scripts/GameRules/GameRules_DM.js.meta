@@ -1,0 +1,6 @@
+fileFormatVersion: 1
+guid: abb24a10de0004aa4b079d7e311098f2
+MonoImporter:
+  importerVersion: 1
+  defaultReferences:
+    cpuPlayerPrefab: {fileID: 100016, guid: 1c00d26d4d834442d9cb7a9a969bbef0, type: 2}

@@ -24,6 +24,7 @@ SOFTWARE.
 
 var headerStyle : GUIStyle;
 var gradTex : Texture2D;
+var mainMenuDirector : MainMenuDirector;
 
 private var sfxVolume : float;
 private var cycleHumVolume : float;
@@ -36,10 +37,8 @@ function Start()
 
 // This must be called from the OnGUI function of another component.
 // Returns true if the player requested to back out of this menu.
-function RenderUI() : boolean
+function RenderUI(sx : float, sy : float) : boolean
 {
-	var sx : float = Screen.width;
-	var sy : float = Screen.height;
 	var w : float = sx * 0.8;
 	var h : float = sy * 0.7;
 	var y : float = sy * 0.2;
@@ -76,9 +75,22 @@ function RenderUI() : boolean
 		}
 		y += dy;
 		
-		// Back button
-		if (GUI.Button(Rect(sx * 0.3, sy * 0.5, sx * 0.2, sy * 0.12), "Back"))
+		if (GUI.Button(Rect(sx * 0.05, y, sx * 0.225, sy*0.125), "Choose Model"))
 		{
+			mainMenuDirector.modelSelectView.PopulateFileList(); // Scan the cycle model folder for all files
+			mainMenuDirector.mainMenuMode = MainMenuMode.ModelSelection;
+		}
+		var modelName : String = ConfigurationDirector.GetCycleModelName();
+		if (modelName == ConfigurationDirector.GetDefaultCycleModelName()) {
+			GUI.Label(Rect(sx * 0.5, y + sy*0.05, sx * 0.4, sy*0.125), "Default");
+		} else {
+			GUI.Label(Rect(sx * 0.5, y + sy*0.05, sx * 0.4, sy*0.125), modelName);
+		}
+		y += dy;		
+		
+		// Back button
+		if (GUI.Button(Rect(sx * 0.3, sy * 0.55, sx * 0.2, sy * 0.12), "Back"))
+		{			
 			result = true;
 		}
 				

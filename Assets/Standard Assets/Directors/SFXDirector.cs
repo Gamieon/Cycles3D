@@ -24,32 +24,38 @@ SOFTWARE.
 
 // Utility file for playing sound effects
 
-static function Play(clip : AudioClip) : AudioSource
-{
-	return Play(clip, Vector3(0,0,0), 1.0, 1.0);
-}
+using UnityEngine;
+using System.Collections;
 
-static function Play(clip : AudioClip, volume : float) : AudioSource
+public static class SFXDirector
 {
-	return Play(clip, Vector3(0,0,0), volume, 1.0);
-}
-
-static function Play(clip : AudioClip, position : Vector3, volume : float) : AudioSource
-{
-	return Play(clip, position, volume, 1.0);
-}
-
-static function Play(clip : AudioClip, position : Vector3, volume : float, pitch : float) : AudioSource
-{
-    var go = new GameObject ("One shot audio");
-    go.transform.position = position;
-    var source : AudioSource = go.AddComponent (AudioSource);
-    source.clip = clip;
-    source.volume = volume * ConfigurationDirector.GetSFXVolume();
-	source.pitch = pitch;
-	source.rolloffMode = AudioRolloffMode.Linear;
-	source.maxDistance = 1000;
-    source.Play();
-    Destroy (go, clip.length);
-    return source;
+	static public AudioSource Play(AudioClip clip)
+	{
+		return Play(clip, new Vector3(0,0,0), 1.0f, 1.0f);
+	}
+	
+	static public AudioSource Play(AudioClip clip, float volume)
+	{
+		return Play(clip, new Vector3(0,0,0), volume, 1.0f);
+	}
+	
+	static public AudioSource Play(AudioClip clip, Vector3 position, float volume)
+	{
+		return Play(clip, position, volume, 1.0f);
+	}
+	
+	static public AudioSource Play(AudioClip clip, Vector3 position, float volume, float pitch)
+	{
+	    var go = new GameObject ("One shot audio");
+	    go.transform.position = position;
+	    AudioSource source = (AudioSource)go.AddComponent<AudioSource>();
+	    source.clip = clip;
+	    source.volume = volume * ConfigurationDirector.GetSFXVolume();
+		source.pitch = pitch;
+		source.rolloffMode = AudioRolloffMode.Linear;
+		source.maxDistance = 1000.0f;
+	    source.Play();
+	    GameObject.Destroy(go, clip.length);
+	    return source;
+	}		
 }

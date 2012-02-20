@@ -1,0 +1,52 @@
+fileFormatVersion: 1
+guid: 1ba55b92cc3730c4782b445ecc923f9e
+ModelImporter:
+  importerVersion: 7
+  meshes:
+    scaleFactor: 1
+    useFileUnits: 1
+    meshCompression: 0
+    generateColliders: 0
+    swapUVs: 0
+  tangentSpace:
+    normalImportMode: 0
+    tangentImportMode: 1
+    smoothingAngle: 60
+    splitTangents: 1
+  materials:
+    generation: 1
+  animations:
+    generation: 3
+    bakeAnimations: 0
+    animationCompression: 1
+    animationWrapMode: 0
+    splitAnimations: 1
+  nodeInfo:
+    //RootNode:
+    - 100000
+    - 400000
+    - 3300000
+    - 2300000
+    - 11100000
+AssetImporter:
+  importerVersion: 1
+  fileIDToRecycleName:
+    4300000: node
+    4300002: RearTire_F
+    4300004: rearWheel_
+    4300006: ignoresha0
+    4300008: ignoresha2
+    4300010: ignoresha4
+    4300012: Body_FACES
+    4300014: ignoresha6
+    4300016: ignoresha8
+    4300018: ignoresh10
+    4300020: FrontThin0
+    4300022: ignoresh12
+    4300024: ignoresh14
+    4300026: ignoresh16
+    4300028: ignoresh18
+    4300030: ignoresh20
+    4300032: ignoresh22
+    4300034: Top_FACES0
+    4300036: ignoresh24

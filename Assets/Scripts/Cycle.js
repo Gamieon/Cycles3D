@@ -27,6 +27,8 @@ var bikeAngle : float = 0;
 var color : Color;
 var playerID : String;
 var sndTurn : AudioClip;
+var cycleMesh : GameObject;
+var mirroredCycleMesh : GameObject;
 
 // The array of renderers that have diffuse colors that we need to
 // sync with the player's color
@@ -69,6 +71,39 @@ function Awake()
 
 function Start()
 {
+	// If the player has a custom model, then set it up now. Only supported
+	// in single player. Applies to all cycles.
+	if (InputTransportMode.Local == inputDirector.GetMode())
+	{
+		var modelFileName : String = ConfigurationDirector.GetCycleModelName();
+		if (ConfigurationDirector.GetDefaultCycleModelName() != modelFileName)	
+		{
+			// Rename the old meshes
+			cycleMesh.name = "DoomedCycleMesh";
+			mirroredCycleMesh.name = "DoomedCycleMirrorMesh";
+			// Create the new one on the top
+			var newCycleMesh : GameObject = CycleModelDirector.InstantiateSimpleCycle();
+			newCycleMesh.transform.parent = cycleMesh.transform.parent;
+			newCycleMesh.transform.position = cycleMesh.transform.position;
+			newCycleMesh.transform.rotation = cycleMesh.transform.rotation;
+			newCycleMesh.name = "CustomCycleMesh";
+			newCycleMesh.SendMessage("OnUpdateCycleColors", color * 0.5f);
+			// Create the new one on the bottom
+			var newMirrorMesh = Instantiate(newCycleMesh);
+			newMirrorMesh.transform.parent = mirroredCycleMesh.transform.parent;
+			newMirrorMesh.transform.position = mirroredCycleMesh.transform.position;
+			newMirrorMesh.transform.rotation = mirroredCycleMesh.transform.rotation;
+			newMirrorMesh.transform.localScale.y *= -1;
+			newMirrorMesh.name = "CustomCycleMeshMirrored";
+			newMirrorMesh.SendMessage("OnUpdateCycleColors", color * 0.1f);
+			// Replace the old models
+			Destroy(cycleMesh);
+			Destroy(mirroredCycleMesh);
+			cycleMesh = newCycleMesh;
+			mirroredCycleMesh = newMirrorMesh;
+		}		
+	}
+	// Wall setup
 	originalActiveWallScale = activeWall.localScale;
 	lastPosition = transform.position;	
 	// Make sure our configuration is updated
@@ -130,46 +165,6 @@ function DoTurn(dirInc : int)
 		transform.position += diff;
 		// Now reset the active wall
 		StartNewActiveWall();
-	}
-}
-
-// This function makes the bike mesh colors uniform with the player's color.
-// This should only be called in Start()
-private function UpdateCycleColors()
-{
-	var r : MeshRenderer;
-	
-	// Update diffuse colors
-	for (r in diffuseColors)
-	{
-		// Special case for the multi-material body
-		if (r.materials.length == 2) {
-			r.materials[1].color = color;
-		} else {
-			r.material.color = color;
-		}
-	}
-	
-	// Update diffuse colors in the Mirror image
-	for (r in diffuseMirroredColors)
-	{
-		// Special case for the multi-material body
-		if (r.materials.length == 2) {
-			r.materials[1].color = color * 0.2;
-		} else {
-			r.material.color = color * 0.2;
-		}		
-	}
-	
-	// Update emissive colors
-	for (r in emissiveColors)
-	{
-		r.material.color = Color(0,0,0,1);
-		if (r.transform.parent.name == "MirroredWalls") {			
-			r.material.SetColor("_Emission", color * 0.2);
-		} else {
-			r.material.SetColor("_Emission", color);
-		}
 	}
 }
 
@@ -288,7 +283,7 @@ private function SetStartingAttributes(owningPlayerID : String, name : String, h
 	playerID = owningPlayerID;
 	gameObject.name = name;
 	color = ColorDirector.H2RGB(hue);
-	UpdateCycleColors();	
+	BroadcastMessage("OnUpdateCycleColors", color, SendMessageOptions.DontRequireReceiver);	
 }
 
 @script RequireComponent(NetworkView)

@@ -1,11 +1,12 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Standard Assets\Directors\MouseDirector.js">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Standard Assets\Directors\VersionDirector.js">
     <Files>
-      <File FileName="Assets\Scripts\PlayerControls.js" Line="69" Column="1" />
-      <File FileName="Assets\Scripts\GameUI.js" Line="550" Column="1" />
-      <File FileName="Assets\Scripts\PlayerCamera.js" Line="23" Column="80" />
-      <File FileName="Assets\Standard Assets\Directors\MouseDirector.js" Line="28" Column="48" />
+      <File FileName="Assets\Scripts\Cycle.js" Line="90" Column="62" />
+      <File FileName="Assets\Scripts\MainMenus\SinglePlayerView.js" Line="34" Column="1" />
+      <File FileName="Assets\Scripts\Directors\InputDirector.js" Line="49" Column="24" />
+      <File FileName="Assets\Standard Assets\CycleColorizer.cs" Line="62" Column="3" />
+      <File FileName="Assets\Standard Assets\Directors\VersionDirector.js" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

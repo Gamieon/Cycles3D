@@ -26,14 +26,11 @@ var hslTex : Texture2D;
 var gradTex : Texture2D;
 var arialSkin : GUISkin;
 
-function DoRender(director : MainMenuDirector)
+function DoRender(director : MainMenuDirector, sx : float, sy : float)
 {
 	// Change the GUI skin for the static text for configuration options
 	var oldSkin : GUISkin = GUI.skin;
 	GUI.skin = arialSkin;
-
-	var sx : float = Screen.width;
-	var sy : float = Screen.height;	
 
 	// Let the player configure their cycle color
 	GUI.Label(Rect(sx * 0.1, sy * 0.1, sx * 0.4, 22), "Cycle Color");
@@ -41,6 +38,9 @@ function DoRender(director : MainMenuDirector)
 	var newHue : float = GUI.HorizontalSlider(Rect(sx * 0.5, sy * 0.1 + 6, sx * 0.3, 20), director.cycleHue, 0, 1);
 	if (newHue != director.cycleHue) {
 		director.cycleHue = newHue;
+		// TODO: You should never update player prefs here; but rather, in the
+		// close or OK button. PC builds are so fast you don't notice the slowness
+		// this creates.
 		ConfigurationDirector.SetCycleHue(newHue);
 		director.UpdateSceneColors();
 	}

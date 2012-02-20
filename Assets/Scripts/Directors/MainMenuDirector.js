@@ -22,7 +22,7 @@ SOFTWARE.
 
 ******************************************************************************/
 
-enum MainMenuMode { Main, Options, SinglePlayerSetup, NetworkLobby, NetworkLobbyHosting, 
+enum MainMenuMode { Main, Options, ModelSelection, SinglePlayerSetup, NetworkLobby, NetworkLobbyHosting, 
 	NetworkLobbyEnteringPassword, StartingHost, ManualConnect, ConnectingToServer, Error };
 
 var mainMenuMode : MainMenuMode = MainMenuMode.Main;
@@ -50,6 +50,7 @@ var enemyCount : float = 1.0;
 var singlePlayerView : SinglePlayerView;
 var multiplayerView : MultiplayerView;
 var optionsView : OptionsView;
+var modelSelectView : ModelSelectView;
 
 var errorDisplayText : String;
 
@@ -66,40 +67,51 @@ function Start()
 	Player.GetSelf();
 	// Disable the console notification area
 	ConsoleDirector.Get().SetNotificationAreaVisible(false);
-
+	
 	// Now do some initial setup
 	oldCameraTarget = mainCameraXForm;
 	Camera.main.transform.position = mainCameraXForm.position;
 	cycleHue = ConfigurationDirector.GetCycleHue();	
 	enemyCount = ConfigurationDirector.GetEnemyCount();
-	UpdateSceneColors();
+	
+	// Load the cycle model	and apply the colors to it
+	SendMessage("LoadCycleModel");
 }
 
 function OnGUI() 
 {
+	var sx : float = Screen.width;
+	var sy : float = Screen.height;
+
 	// Set the GUI skin
 	GUI.skin = guiSkin;
 	
 	switch (mainMenuMode)
 	{
 		case MainMenuMode.Main:
-			RenderMain();
+			RenderMain(sx,sy);
 			break;
 		case MainMenuMode.Options:
-			if (optionsView.RenderUI()) 
+			if (optionsView.RenderUI(sx,sy)) 
 			{
 				mainMenuMode = MainMenuMode.Main;
 				TransitionCamera(mainCameraXForm, 100.0);				
 			}
 			break;
+		case MainMenuMode.ModelSelection:
+			if (modelSelectView.RenderUI(sx,sy))
+			{
+				mainMenuMode = MainMenuMode.Options;
+			}
+			break;
 		case MainMenuMode.SinglePlayerSetup:
-			singlePlayerView.DoRender(this);
+			singlePlayerView.DoRender(this, sx,sy);
 			break;
 		case MainMenuMode.NetworkLobby:
 		case MainMenuMode.NetworkLobbyHosting:
 		case MainMenuMode.NetworkLobbyEnteringPassword:		
 		case MainMenuMode.ManualConnect:
-			multiplayerView.DoRender(this);
+			multiplayerView.DoRender(this, sx,sy);
 			break;
 		case MainMenuMode.StartingHost:
 		case MainMenuMode.ConnectingToServer:
@@ -140,7 +152,22 @@ function TransitionCamera(newTarget : Transform, speed : float)
 	cameraTransitionTime = 0;
 }
 
-private function RenderMain()
+function LoadCycleModel()
+{
+	var doomed : GameObject = GameObject.Find("Cycle");
+	doomed.name = "DoomedCycle";
+	var cycleModel : GameObject = CycleModelDirector.InstantiateSimpleCycle();
+	cycleModel.transform.position = Vector3(-14, -3.260338, 0);
+	cycleModel.transform.localEulerAngles = Vector3(0,270,0);
+	cycleModel.transform.localScale = Vector3(0.5,0.5,0.5);
+	cycleModel.name = "Cycle";	
+	if (null != doomed) {
+		Destroy(doomed);
+	}
+	UpdateSceneColors();
+}
+
+private function RenderMain(sx : float, sy : float)
 {
 	// Draw the "Cycles3D" logo
 	var c : Color;
@@ -189,13 +216,9 @@ function UpdateSceneColors()
 	var c : Color = ColorDirector.H2RGB(cycleHue);
 	for (var r in sceneColors)
 	{
-		// Special case for the multi-material body
-		if (r.materials.length == 2) {
-			r.materials[1].color = c;
-		} else {
-			r.material.color = c;
-		}
+		r.material.color = c;
 	}
+	GameObject.Find("Cycle").SendMessage("OnUpdateCycleColors", c);
 }
 
 private function RenderWaitScreen()

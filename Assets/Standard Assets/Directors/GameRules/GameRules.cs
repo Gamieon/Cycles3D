@@ -24,4 +24,4 @@ SOFTWARE.
 
 // This source simply holds enumerations for all the possible kind of games.
 // If we add new game modes like team deathmatch or soccer, we can do it here.
-enum GameRuleTypes { Invalid = 0, Deathmatch = 1 };
+public enum GameRuleTypes { Invalid = 0, Deathmatch = 1 };

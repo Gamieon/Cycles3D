@@ -22,6 +22,9 @@ SOFTWARE.
 
 ******************************************************************************/
 
+// Available rotation axes
+enum RotationAxes { MouseXAndY = 0, MouseX = 1 }
+
 // The current camera mode
 var cameraMode : CameraMode = CameraMode.CycleFaceForward;
 // Camera zoom
@@ -33,13 +36,27 @@ var gameUI : GameUI;
 // The mouse director for getting the "wrapped" mouse position
 var mouseDirector : MouseDirector;
 
+// The current rotation
+var cameraRotation : Vector3 = Vector3.zero;
+// Mouse X sensitivity
+private var sensitivityX : float = 8;
+// Mouse Y sensitivity
+private var sensitivityY : float = 8;
+// Rotation extremes
+private var minimumX : float = -360;
+private var maximumX : float = 360;
+private var minimumY : float = 0;
+private var maximumY : float = 90;
+// Mouse Y rotation
+private var rotationY : float = 0;
+
 // The cycle that the camera is watching
 private var cycle : Transform;
 // The position of the camera when in FaceForward ode
 private var cameraFaceForwardPosition : Transform;
 
 // The distance from the camera to the player in orbit mode
-private var orbitDistance : float = 250.0;
+private var orbitDistance : float = 350.0;
 // The distance from the camera to the player in top-down mode
 private var topDownDistance : float = 600.0;
 // The current zoom which we interpolate towards
@@ -54,7 +71,7 @@ private var everBeenAssignedCycle : boolean = false;
 
 function Start()
 {
-	cameraMode = ConfigurationDirector.GetCameraMode();
+	SetCameraMode( ConfigurationDirector.GetCameraMode() );
 	ApplyDefaultCameraOrientation();
 }
 
@@ -63,6 +80,15 @@ function SetCycle(newCycle : Transform)
 	everBeenAssignedCycle = true;
 	cycle = newCycle;
 	cameraFaceForwardPosition = cycle.Find("CameraFaceForwardPosition");
+}
+
+function SetCameraMode(value : CameraMode)
+{
+	cameraMode = value;
+	cameraRotation = Vector3.zero;
+	if (CameraMode.CycleOrbit == value) {
+		rotationY = 30;
+	}
 }
 
 function OnGUI()
@@ -111,7 +137,7 @@ function Update()
     	if (isWatchingOtherPlayers && CameraMode.CycleFaceForward == newMode) {
     		newMode = (newMode + 1) % 3;
     	}
-    	cameraMode = newMode;
+    	SetCameraMode(newMode);
     	
     	// Only preserve the view change if they hit F5
     	if (!isWatchingOtherPlayers && Input.GetKeyDown(KeyCode.F5)) {
@@ -140,7 +166,7 @@ function OnSwitchToRandomPlayer()
 		playerBeingWatchedIndex = Random.value * (l - 0.1);
 		SetCycle(cycles[playerBeingWatchedIndex].transform);
 		var modeInt : int = 1 + Random.value * 1.999;
-		cameraMode = modeInt;
+		SetCameraMode(modeInt);
 	}
 }
 
@@ -155,15 +181,29 @@ private function UpdateCameraOrientation()
 	switch (cameraMode)
 	{
 		case CameraMode.CycleFaceForward:
-			if (null != cycle) {
-				// Orient the camera to look forward in front of the cycle
-				Camera.main.transform.position = cameraFaceForwardPosition.position;
-				Camera.main.transform.forward = -cycle.forward;
+			if (null != cycle) 
+			{
 				// Do rotations on the camera so the player can look around.
-				if (!gameUI.isMenuWindowVisible) {
-					mousePos = GetMousePos();
-					Camera.main.transform.Rotate(Vector3(mousePos.y * -30.0,mousePos.x * 90.0,0));
+				if (!gameUI.isMenuWindowVisible) 
+				{
+					// Recenter the camera if the user left-clicks
+					if (Input.GetMouseButtonDown(0)) 
+					{
+						cameraRotation = Vector3.zero;
+					}
+					else
+					{
+						// Update the value of cameraRotation based on the mouse position
+						DoRotation(RotationAxes.MouseX);
+					}
 				}
+				
+				// Orient the camera to always be in front of the cycle
+				Camera.main.transform.position = cameraFaceForwardPosition.position;				
+				// Update the camera rotation
+				Camera.main.transform.forward = -cycle.forward;
+				Camera.main.transform.Rotate(cameraRotation);
+				
 			} else {
 				// If we get here, the cycle we were watching just blew up
 				HandleMissingCycle();		
@@ -171,14 +211,30 @@ private function UpdateCameraOrientation()
 			break;
 			
 		case CameraMode.CycleOrbit:
-			if (null != cycle) {
-				mousePos = GetMousePos();
-				if (!gameUI.isMenuWindowVisible) {
-					if (mousePos.y > 0.88) { mousePos.y = 0.88; } // Don't let the orbit go under the cycle
-		        	Camera.main.transform.rotation = Quaternion.Euler((1.0 - mousePos.y) * 30.0, mousePos.x * 180.0, 0);
-		        }
-	        	Camera.main.transform.position = Camera.main.transform.rotation * Vector3(0.0, 0.0, -(orbitDistance + currentZoom * 50.0)) + cycle.position;
-			} else {
+			if (null != cycle) 
+			{
+				// Do rotations on the camera so the player can look around.
+				if (!gameUI.isMenuWindowVisible) 
+				{
+					// Recenter the camera if the user left-clicks
+					if (Input.GetMouseButtonDown(0)) 
+					{
+						cameraRotation = Vector3.zero;
+						rotationY = 30;
+					}
+					// Update the value of cameraRotation based on the mouse position
+					DoRotation(RotationAxes.MouseXAndY);
+				}
+				
+				// Make the camera face in the direction of the rotation				
+				Camera.main.transform.localEulerAngles = cameraRotation;
+				// Now put the camera in a spot away from the cycle in the direction the camera is facing
+				Camera.main.transform.position = cycle.position + Camera.main.transform.forward * (orbitDistance + currentZoom * 50.0);
+				// Now have the camera look at the cycle
+				Camera.main.transform.forward = -Camera.main.transform.forward;
+			} 
+			else
+			{
 				// If we get here, the cycle we were watching just blew up
 				HandleMissingCycle();
 			}
@@ -205,7 +261,7 @@ private function UpdateCameraOrientation()
 // This function is called when the cycle we were watching just blew up
 private function HandleMissingCycle()
 {
-	cameraMode = CameraMode.Freeze;
+	cameraMode = CameraMode.Freeze; // Don't call SetCameraMode because we don't want to reset the camera rotation
 	isWatchingOtherPlayers = true;	
 	// Switch to another player in three seconds
 	InvokeRepeating("OnSwitchToRandomPlayer", 3.0, 1.0);
@@ -217,19 +273,22 @@ private function ApplyDefaultCameraOrientation()
 		Camera.main.transform.position = Vector3(79.28511, 71.74137, 46.0177);
 		Camera.main.transform.localEulerAngles = Vector3(21.97003, 223.1048, 0);
 	} else {
-		// We must be a dedicated server
+		// We must be a dedicated server; no need to mess with cameras
 	}
 }
 
-// Returns the position of the mouse cursor. Each axe is in the range [-1,1].
-// If the mouse cursor is perfectly centered, its coordinate value is (0,0)
-private function GetMousePos() : Vector2
+// Update the cameraRotation member with a new value based on player mouse movement
+private function DoRotation(axes : RotationAxes)
 {
-	// Get the mouse position. The origin is on the lower left-hand corner
-	// of the window. Input.mousePosition is given to us in screen coordinates;
-	// we need to transform them such that the center of the screen is (0,0).
-	var mousePos : Vector2 = Vector2(Input.mousePosition.x, Input.mousePosition.y);
-	mousePos.x = (mousePos.x / Screen.width) * 2.0 - 1.0;
-	mousePos.y = (mousePos.y / Screen.height) * 2.0 - 1.0;
-	return mousePos;
+	if (axes == RotationAxes.MouseX)
+	{
+		cameraRotation.y += Input.GetAxis("Mouse X") * sensitivityX;
+	}
+	else
+	{
+		var rotationX : float = cameraRotation.y + Input.GetAxis("Mouse X") * sensitivityX;		
+		rotationY -= Input.GetAxis("Mouse Y") * sensitivityY;
+		rotationY = Mathf.Clamp (rotationY, minimumY, maximumY);
+		cameraRotation = Vector3(-rotationY, rotationX, 0);		
+	}	
 }

@@ -26,7 +26,7 @@ SOFTWARE.
 
 static function GetVersion() : String
 {
-	return "2.0.a000";
+	return "2.0.a100";
 }
 
 static function GetGameTypeName() : String
